@@ -1,3 +1,5 @@
 flask
 transformers
 torch
+qdrant_client
+llama_index
