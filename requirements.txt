@@ -4,3 +4,6 @@ torch
 qdrant_client
 llama_index
 openai
+pypdf
+cryptography
+sentence-transformers
