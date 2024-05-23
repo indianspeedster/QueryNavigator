@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title> Files Upload for Query Navigator</title>
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function(e){
+            $(upload).on('click', function(){
+                var form_data = new FormData()
+                var ins = document.getElementById('multiFiles').files.length;
+
+                if(ins == 0){
+                    $('#msg').html('<span style="color:red">Select at least one file</span>')
+                    return;
+                }
+
+                for(var x = 0; x < ins; x++){
+                    form_data.append("files[]", document.getElementById('multiFiles').files[x]);
+                }
+
+                $.ajax({
+                    url: '/upload',
+                    dataType: 'json',
+                    cache: false,
+                    contentType: false,
+                    processData: false,
+                    data: form_data,
+                    type: 'post',
+                    success: function (response){
+                        $('#msg').html('');
+                        $.each(response, function (key,data) {
+                            if (key != 'message'){
+                                $('#msg').append(key + '->' + data + '<br/>');
+                            } else {
+                                $('#msg').append(data + '<br/>');
+                            }
+                        })
+                        // Run data.py after successful upload
+                        executeDataPreprocessing()
+                    },
+                    error: function (response) {
+                        $('#msg').html(response.message);
+                    }
+
+                });
+
+                // alert('success')
+            });
+
+            function executeDataPreprocessing() {
+                // Make an AJAX request to execute the Python script
+                $.ajax({
+                    type: 'POST',
+                    url: '/prep_data', // Replace with your server endpoint
+                    success: function(response) {
+                        console.log('Python script executed successfully');
+                        // Handle the response if needed
+                    },
+                    error: function(error) {
+                       console.error('Error executing Python script:', error);
+                        // Handle the error if needed
+                    }
+                });
+            }
+        });
+    </script>
+</head>
+
+<body>
+    <body>
+        <h2>PDF file(s) Upload - Select file(s) to Upload</h2>
+        <dl>
+            <p>
+                <p id="msg"></p>
+                <input type="file" id="multiFiles" name="files[]" multiple="multiple" />
+                <button id="upload">Upload</button>
+            </p>
+        </dl>
+    </body>
+</body>
+</html>

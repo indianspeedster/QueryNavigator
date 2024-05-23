@@ -19,8 +19,11 @@ vector_store = QdrantVectorStore(
     client=client,
 )
 
+# ref: https://docs.llamaindex.ai/en/stable/examples/data_connectors/simple_directory_reader.html
+# Load all (top-level) files from directory
 documents = SimpleDirectoryReader(
-    input_files = ["invading_the_sacred.pdf"]
+    input_dir="docs",   
+    # input_files = ["invading_the_sacred.pdf"]
 ).load_data()
 
 document = Document(text = "\n\n".join([doc.text for doc in documents]))
